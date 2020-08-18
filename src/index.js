@@ -133,10 +133,50 @@ app.patch('/exercises/delete', [auth], async (req, res) => {
 app.post('/workouts', [auth], async (req, res) => {
     try {
         let db = await connect()
-        let cursor = await db.collection("exercises").find({ owner: req.body.id }).project({ owner: 0 }).sort({ date: -1 })
+        let cursor = await db.collection("workouts").find({ owner: req.body.id }).project({ owner: 0 }).sort({ date: -1 })
         let result = await cursor.toArray()
         cursor.close()
-        if (result.length > 0) res.json(result)
+        res.json(result)
+    }
+    catch {
+        res.sendStatus(400)
+    }
+})
+
+app.put('/workouts/save', [auth], async (req, res) => {
+    try {
+        delete req.body._id
+        let db = await connect()
+        let result = await db.collection("workouts").insertOne(req.body)
+        if (result.insertedCount == 1) res.json(result.insertedId)
+        else res.sendStatus(400)
+    }
+    catch {
+        res.sendStatus(400)
+    }
+})
+
+app.patch('/workouts/update', [auth], async (req, res) => {
+    try {
+        let id = req.body._id
+        delete req.body._id
+        let db = await connect()
+        let result = await db.collection("workouts").updateOne(
+            { _id: mongo.ObjectId(id) },
+            { $set: req.body }
+        )
+        if (result.modifiedCount == 1) res.sendStatus(200)
+        else res.sendStatus(400)
+    } catch {
+        res.sendStatus(400)
+    }
+})
+
+app.patch('/workouts/delete', [auth], async (req, res) => {
+    try {
+        let db = await connect()
+        let result = await db.collection("workouts").deleteOne({ _id: mongo.ObjectId(req.body.id), owner: req.body.owner })
+        if (result.deletedCount == 1) res.sendStatus(200)
         else res.sendStatus(400)
     }
     catch {
