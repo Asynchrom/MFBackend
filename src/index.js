@@ -97,7 +97,6 @@ app.post('/exercises', [auth], async (req, res) => {
             ]
         }).project({ owner: 0 }).sort({ name: 1 })
         let result = await cursor.toArray()
-        console.log(req.body.id, result)
         cursor.close()
         if (result.length > 0) res.json(result)
         else res.sendStatus(400)
@@ -112,6 +111,32 @@ app.put('/exercises/save', [auth], async (req, res) => {
         let db = await connect()
         let result = await db.collection("exercises").insertOne(req.body)
         if (result.insertedCount == 1) res.json(result.insertedId)
+        else res.sendStatus(400)
+    }
+    catch {
+        res.sendStatus(400)
+    }
+})
+
+app.patch('/exercises/delete', [auth], async (req, res) => {
+    try {
+        let db = await connect()
+        let result = await db.collection("exercises").deleteOne({ _id: mongo.ObjectId(req.body.id), owner: req.body.owner })
+        if (result.deletedCount == 1) res.sendStatus(200)
+        else res.sendStatus(400)
+    }
+    catch {
+        res.sendStatus(400)
+    }
+})
+
+app.post('/workouts', [auth], async (req, res) => {
+    try {
+        let db = await connect()
+        let cursor = await db.collection("exercises").find({ owner: req.body.id }).project({ owner: 0 }).sort({ date: -1 })
+        let result = await cursor.toArray()
+        cursor.close()
+        if (result.length > 0) res.json(result)
         else res.sendStatus(400)
     }
     catch {
