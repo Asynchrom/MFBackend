@@ -108,6 +108,7 @@ app.post('/exercises', [auth], async (req, res) => {
 
 app.put('/exercises/save', [auth], async (req, res) => {
     try {
+        req.body.public = false
         let db = await connect()
         let result = await db.collection("exercises").insertOne(req.body)
         if (result.insertedCount == 1) res.json(result.insertedId)
