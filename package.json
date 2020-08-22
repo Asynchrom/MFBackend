@@ -9,7 +9,7 @@
     "heroku-postbuild": "npm install",
     "start": "babel-node src/index.js"
   },
-  "author": "L.Vila",
+  "author": "Asynchrom",
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^5.0.0",
