@@ -16,6 +16,15 @@ app.use(cors())
 app.use(express.json())
 app.listen(port)
 
+app.post('/', (req, res) => {
+    try {
+        let db = await connect()
+    }
+    catch {
+        
+    }
+})
+
 app.post('/users/login', async (req, res) => {
     try {
         let db = await connect()
