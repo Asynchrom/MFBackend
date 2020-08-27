@@ -16,7 +16,7 @@ app.use(cors())
 app.use(express.json())
 app.listen(port)
 
-app.post('/', (req, res) => {
+app.post('/', async (req, res) => {
     try {
         let db = await connect()
     }
